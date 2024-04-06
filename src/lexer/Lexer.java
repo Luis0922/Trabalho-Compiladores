@@ -1,14 +1,18 @@
+package lexer;
+
+import symbols.Type;
+
 import java.io.*;
 import java.util.*;
 public class Lexer {
     public static int line = 1; //contador de linhas
     private char character = ' '; //caractere lido do arquivo
     private FileReader file;
-    private Hashtable symbolTable = new Hashtable();
+    private Hashtable reservedWords = new Hashtable();
 
     /* Método para inserir palavras reservadas na HashTable */
-    private void addReservedWordIntoSymbolTable(Word word) {
-        symbolTable.put(word.getLexeme(), word); // lexema é a chave para entrada na
+    private void addReservedWord(Word word) {
+        reservedWords.put(word.getLexeme(), word); // lexema é a chave para entrada na
         //HashTable
     }
 
@@ -22,12 +26,20 @@ public class Lexer {
         }
 
         //Insere palavras reservadas na HashTable
-        addReservedWordIntoSymbolTable(new Word("if", Tag.IF));
-        addReservedWordIntoSymbolTable(new Word("program", Tag.PRG));
-        addReservedWordIntoSymbolTable(new Word("begin", Tag.BEG));
-        addReservedWordIntoSymbolTable(new Word("end", Tag.END));
-        addReservedWordIntoSymbolTable(new Word("type", Tag.TYPE));
-        addReservedWordIntoSymbolTable(new Word("int", Tag.INT));
+        addReservedWord(new Word("if", Tag.IF));
+        addReservedWord(new Word("app", Tag.APP));
+        addReservedWord(new Word("var", Tag.VAR));
+        addReservedWord(new Word("init", Tag.INIT));
+        addReservedWord(new Word("return", Tag.RETURN));
+        addReservedWord(Type.integer);
+        addReservedWord(Type.real);
+        addReservedWord(new Word("else", Tag.ELSE));
+        addReservedWord(new Word("then", Tag.THEN));
+        addReservedWord(new Word("end", Tag.END));
+        addReservedWord(new Word("repeat", Tag.REPEAT));
+        addReservedWord(new Word("until", Tag.UNTIL));
+        addReservedWord(new Word("read", Tag.READ));
+        addReservedWord(new Word("write", Tag.WRITE));
     }
 
     /*Lê o próximo caractere do arquivo*/
@@ -82,13 +94,12 @@ public class Lexer {
             }while(Character.isLetterOrDigit(character));
 
             String string = stringBuffer.toString();
-            Word word = (Word)symbolTable.get(string);
+            Word word = (Word)reservedWords.get(string);
             if (word != null) return word; // word already exists in HashTable
-            word = new Word (string, Tag.ID);
-            symbolTable.put(string, word);
+            word = new Word(string, Tag.ID);
+            reservedWords.put(string, word);
             return word;
         }
-
         // Characters not specified
         Token token = new Token(character);
         character = ' ';
