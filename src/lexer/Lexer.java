@@ -21,11 +21,10 @@ public class Lexer {
         try {
             file = new FileReader(fileName);
         } catch (FileNotFoundException exception) {
-            System.out.println("Arquivo não encontrado");
-            throw exception;
+            throw new FileNotFoundException("File not found");
         }
 
-        //Insere palavras reservadas na HashTable
+        // Insere palavras reservadas na HashTable
         addReservedWord(new Word("if", Tag.IF));
         addReservedWord(new Word("app", Tag.APP));
         addReservedWord(new Word("var", Tag.VAR));
@@ -56,7 +55,7 @@ public class Lexer {
     }
 
     public Token scan() throws IOException{
-        //Desconsidera delimitadores na entrada
+        // Desconsidera delimitadores na entrada
         for (;; readNextCharacter()) {
             if (character == ' ' || character == '\t' || character == '\r' || character == '\b') continue;
             else if (character == '\n') line++; // line count
@@ -67,10 +66,13 @@ public class Lexer {
             // Operators
             case '!':
                 // Se o proximo caractere for = retorna o not equal, se não cria um novo token "!"
-                if (readNextCharacter('=')) return Word.not_eq;
+                if (readNextCharacter('=')) return Word.not_equal;
                 else return new Token('!');
             case '>':
-                if (readNextCharacter('>')) return Word.big_big;
+                if (readNextCharacter('=')) return Word.big_equal;
+                else return new Token('>');
+            case '<':
+                if (readNextCharacter('=')) return Word.least_equal;
                 else return new Token('>');
         }
 
@@ -100,6 +102,7 @@ public class Lexer {
             reservedWords.put(string, word);
             return word;
         }
+
         // Characters not specified
         Token token = new Token(character);
         character = ' ';
