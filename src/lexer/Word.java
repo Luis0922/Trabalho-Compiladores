@@ -3,9 +3,8 @@ package lexer;
 public class Word extends Token {
     private String lexeme = "";
     public static final Word and = new Word ("&&", Tag.AND);
-    public static final Word defined_as = new Word ("::=", Tag.DEFINED_AS);
+    public static final Word defined_as = new Word (":=", Tag.DEFINED_AS);
     public static final Word big_equal = new Word (">=", Tag.BIG_EQUAL);
-    public static final Word least = new Word ("<", Tag.LEAST);
     public static final Word least_equal = new Word ("<=", Tag.LEAST_EQUAL);
     public static final Word not_equal = new Word ("!=", Tag.NOT_EQUAL);
     public static final Word or = new Word ("||", Tag.OR);

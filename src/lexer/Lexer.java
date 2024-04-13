@@ -30,8 +30,8 @@ public class Lexer {
         addReservedWord(new Word("var", Tag.VAR));
         addReservedWord(new Word("init", Tag.INIT));
         addReservedWord(new Word("return", Tag.RETURN));
-        addReservedWord(Type.integer);
-        addReservedWord(Type.real);
+        addReservedWord(new Word("integer", Tag.INTEGER));
+        addReservedWord(new Word("real", Tag.REAL));
         addReservedWord(new Word("else", Tag.ELSE));
         addReservedWord(new Word("then", Tag.THEN));
         addReservedWord(new Word("end", Tag.END));
@@ -65,7 +65,6 @@ public class Lexer {
         switch(character){
             // Operators
             case '!':
-                // Se o proximo caractere for = retorna o not equal, se não cria um novo token "!"
                 if (readNextCharacter('=')) return Word.not_equal;
                 else return new Token('!');
             case '>':
@@ -74,6 +73,12 @@ public class Lexer {
             case '<':
                 if (readNextCharacter('=')) return Word.least_equal;
                 else return new Token('>');
+            case '|':
+                if (readNextCharacter('|')) return Word.or;
+            case '&':
+                if (readNextCharacter('&')) return Word.and;
+            case ':':
+                if (readNextCharacter('=')) return Word.defined_as;
         }
 
         // Digit
