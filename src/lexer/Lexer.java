@@ -1,13 +1,12 @@
 package lexer;
 
-import symbols.Type;
-
 import java.io.*;
 import java.util.*;
 public class Lexer {
     public static int line = 1; //contador de linhas
     private char character = ' '; //caractere lido do arquivo
     private FileReader file;
+    private boolean EOF;
     private Hashtable reservedWords = new Hashtable();
 
     /* Método para inserir palavras reservadas na HashTable */
@@ -17,7 +16,7 @@ public class Lexer {
     }
 
     /* Método construtor */
-    public Lexer(String fileName) throws FileNotFoundException {
+    public Lexer(String fileName) throws IOException {
         try {
             file = new FileReader(fileName);
         } catch (FileNotFoundException exception) {
@@ -39,11 +38,24 @@ public class Lexer {
         addReservedWord(new Word("until", Tag.UNTIL));
         addReservedWord(new Word("read", Tag.READ));
         addReservedWord(new Word("write", Tag.WRITE));
+
+        Token token;
+        while ((token = scan()) != null) {
+            System.out.print(token + " ");
+            if(token.toString().equals("59")){
+                System.out.print("\n");
+            }
+        }
     }
 
     /*Lê o próximo caractere do arquivo*/
     private void readNextCharacter() throws IOException {
-        character = (char) file.read();
+        int next = file.read();
+        if (next == -1) {
+            EOF = true; // supondo que você tenha uma constante EOF definida
+        } else {
+            character = (char) next;
+        }
     }
 
     /* Lê o próximo caractere do arquivo e verifica se é igual a nextCharacter*/
@@ -55,6 +67,9 @@ public class Lexer {
     }
 
     public Token scan() throws IOException{
+        if(EOF){
+            return null;
+        }
         // Desconsidera delimitadores na entrada
         for (;; readNextCharacter()) {
             if (character == ' ' || character == '\t' || character == '\r' || character == '\b') continue;
