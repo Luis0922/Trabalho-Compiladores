@@ -38,14 +38,6 @@ public class Lexer {
         addReservedWord(new Word("until", Tag.UNTIL));
         addReservedWord(new Word("read", Tag.READ));
         addReservedWord(new Word("write", Tag.WRITE));
-
-        Token token;
-        while ((token = scan()) != null) {
-            System.out.print(token + " ");
-            if(token.toString().equals("59")){
-                System.out.print("\n");
-            }
-        }
     }
 
     /*Lê o próximo caractere do arquivo*/

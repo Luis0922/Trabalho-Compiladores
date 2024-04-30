@@ -1,2 +1,2 @@
 integer variavel = 0;
-integer b = 4;
+integer b != ;
