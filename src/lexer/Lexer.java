@@ -7,12 +7,11 @@ public class Lexer {
     private char character = ' '; //caractere lido do arquivo
     private FileReader file;
     private boolean EOF;
-    private Hashtable reservedWords = new Hashtable();
+    private Hashtable symbolTable = new Hashtable();
 
     /* Método para inserir palavras reservadas na HashTable */
     private void addReservedWord(Word word) {
-        reservedWords.put(word.getLexeme(), word); // lexema é a chave para entrada na
-        //HashTable
+        symbolTable.put(word.getLexeme(), word); // lexema é a chave para entrada na
     }
 
     /* Método construtor */
@@ -44,7 +43,7 @@ public class Lexer {
     private void readNextCharacter() throws IOException {
         int next = file.read();
         if (next == -1) {
-            EOF = true; // supondo que você tenha uma constante EOF definida
+            EOF = true;
         } else {
             character = (char) next;
         }
@@ -100,7 +99,7 @@ public class Lexer {
 
         // Identifiers
         if(Character.isLetterOrDigit(character)){
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
 
             do{
                 stringBuffer.append(character);
@@ -108,10 +107,10 @@ public class Lexer {
             }while(Character.isLetterOrDigit(character));
 
             String string = stringBuffer.toString();
-            Word word = (Word)reservedWords.get(string);
+            Word word = (Word)symbolTable.get(string);
             if (word != null) return word; // word already exists in HashTable
             word = new Word(string, Tag.ID);
-            reservedWords.put(string, word);
+            symbolTable.put(string, word);
             return word;
         }
 
