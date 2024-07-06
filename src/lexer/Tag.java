@@ -1,5 +1,8 @@
 package lexer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Tag {
     public final static int
                 // Palavras reservadas
@@ -30,4 +33,35 @@ public class Tag {
 
                 NUM = 322,
                 ID = 323;
+    private static final Map<Integer, String> map = new HashMap<Integer, String>();
+
+    static {
+        map.put(APP, "APP");
+        map.put(VAR, "VAR");
+        map.put(INIT, "INIT");
+        map.put(RETURN, "RETURN");
+        map.put(INTEGER, "INTEGER");
+        map.put(REAL, "REAL");
+        map.put(IF, "IF");
+        map.put(THEN, "THEN");
+        map.put(END, "END");
+        map.put(ELSE, "ELSE");
+        map.put(REPEAT, "REPEAT");
+        map.put(UNTIL, "UNTIL");
+        map.put(READ, "READ");
+        map.put(WRITE, "WRITE");
+        map.put(DEFINED_AS, "DEFINED_AS");
+        map.put(BIG_EQUAL, "BIG_EQUAL");
+        map.put(LEAST_EQUAL, "LEAST_EQUAL");
+        map.put(NOT_EQUAL, "NOT_EQUAL");
+        map.put(OR, "OR");
+        map.put(AND, "AND");
+        map.put(NUM, "NUM");
+        map.put(ID, "ID");
+    }
+
+    public static String getTagName(int value) {
+        return map.get(value);
+    }
 }
+

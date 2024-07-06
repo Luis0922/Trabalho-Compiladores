@@ -1,4 +1,5 @@
 import lexer.Lexer;
+import lexer.Tag;
 import lexer.Token;
 import lexer.Word;
 
@@ -9,9 +10,11 @@ public class Main {
         var lexer = new Lexer("C:\\Users\\dti Digital\\Documents\\Projetos\\Cefet\\Compiladores\\Trabalho-Compiladores\\src\\teste.txt");
         Token token;
         while ((token = lexer.scan()) != null) {
-            System.out.print("<" + token.tag + ", " + token + "> ");
-            if(token.toString().equals("59")){
-                System.out.print("\n");
+            if(token.tag < 256) {
+                System.out.println("< " + (char) token.tag + " >");
+            }
+            else {
+                System.out.println("< " + Tag.getTagName(token.tag) + " , " + token + " >");
             }
         }
     }
