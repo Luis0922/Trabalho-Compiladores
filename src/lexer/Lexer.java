@@ -92,10 +92,10 @@ public class Lexer {
         // Digit
         if (Character.isDigit(character)){
             int number=0;
-            do{
+            while(Character.isDigit(character)){
                 number = 10*number + Character.digit(character,10);
                 readNextCharacter();
-            }while(Character.isDigit(character));
+            }
 
             if(character == '.') {
                 readNextCharacter();
