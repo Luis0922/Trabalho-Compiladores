@@ -89,12 +89,26 @@ public class Lexer {
 
         // Digit
         if (Character.isDigit(character)){
-            int value=0;
+            int number=0;
             do{
-                value = 10*value + Character.digit(character,10);
+                number = 10*number + Character.digit(character,10);
                 readNextCharacter();
             }while(Character.isDigit(character));
-            return new Num(value);
+
+            if(character == '.') {
+                readNextCharacter();
+                if(Character.isDigit(character)){
+                    float decimalNumber = number;
+                    float fraction = 10;
+                    while(Character.isDigit(character)){
+                        decimalNumber = decimalNumber + Character.digit(character,10)/fraction;
+                        fraction *= 10;
+                        readNextCharacter();
+                    }
+                    return new Real(decimalNumber);
+                }
+            }
+            return new Num(number);
         }
 
         // Identifiers
