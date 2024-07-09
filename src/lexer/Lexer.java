@@ -1,5 +1,7 @@
 package lexer;
 
+import Exceptions.IncompleteValueException;
+
 import java.io.*;
 import java.util.*;
 public class Lexer {
@@ -57,7 +59,7 @@ public class Lexer {
         return true;
     }
 
-    public Token scan() throws IOException{
+    public Token scan() throws Exception {
         if(EOF){
             return null;
         }
@@ -106,6 +108,9 @@ public class Lexer {
                         readNextCharacter();
                     }
                     return new Real(decimalNumber);
+                }
+                else {
+                    throw new IncompleteValueException("O valor está incompleto: " + number);
                 }
             }
             return new Num(number);
