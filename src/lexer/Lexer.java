@@ -76,7 +76,7 @@ public class Lexer {
             while (character != '}'){
                 readNextCharacter();
                 literal.append(character);
-                if (EOF) throw new IncompleteValueException("Literal mal formado");
+                if (EOF) throw new IncompleteValueException(line, "Literal mal formado");
             }
             readNextCharacter();
             return new Literal(literal.toString());
@@ -95,10 +95,10 @@ public class Lexer {
                 else return new Token('>');
             case '|':
                 if (readNextCharacter('|')) return Word.or;
-                else throw new IncompleteValueException("Somente | não faz parte da linguagem");
+                else throw new IncompleteValueException(line, "Somente | não faz parte da linguagem");
             case '&':
                 if (readNextCharacter('&')) return Word.and;
-                else throw new IncompleteValueException("Somente & não faz parte da linguagem");
+                else throw new IncompleteValueException(line, "Somente & não faz parte da linguagem");
             case ':':
                 if (readNextCharacter('=')) return Word.defined_as;
                 else return new Token(':');
@@ -125,7 +125,7 @@ public class Lexer {
                     return new Real(decimalNumber);
                 }
                 else {
-                    throw new IncompleteValueException("O valor está incompleto: " + number);
+                    throw new IncompleteValueException(line, String.format("O valor está incompleto: " + number + "."));
                 }
             }
             return new Num(number);
