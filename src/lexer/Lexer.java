@@ -76,7 +76,7 @@ public class Lexer {
             while (character != '}'){
                 readNextCharacter();
                 literal.append(character);
-                if (EOF) throw new IncompleteValueException(line, "Literal mal formado");
+                if (EOF) throw new IncompleteValueException(line, "Literal " + literal + "\nmal formado");
             }
             readNextCharacter();
             return new Literal(literal.toString());
