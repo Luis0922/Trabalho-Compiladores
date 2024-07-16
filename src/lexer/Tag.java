@@ -20,6 +20,7 @@ public class Tag {
                 UNTIL = 267,
                 READ = 268,
                 WRITE = 269,
+                LITERAL = 270,
 
                 //Operadores e pontuação
                 DEFINED_AS = 289,
@@ -58,6 +59,7 @@ public class Tag {
         map.put(AND, "AND");
         map.put(NUM, "NUM");
         map.put(ID, "ID");
+        map.put(LITERAL, "LITERAL");
     }
 
     public static String getTagName(int value) {

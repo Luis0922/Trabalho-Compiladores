@@ -70,6 +70,18 @@ public class Lexer {
             else break;
         }
 
+        // Literal
+        if (character == '{'){
+            StringBuilder literal = new StringBuilder(String.valueOf(character));
+            while (character != '}'){
+                readNextCharacter();
+                literal.append(character);
+                if (EOF) throw new IncompleteValueException("Literal mal formado");
+            }
+            readNextCharacter();
+            return new Literal(literal.toString());
+        }
+
         switch(character){
             // Operators
             case '!':
@@ -87,6 +99,7 @@ public class Lexer {
                 if (readNextCharacter('&')) return Word.and;
             case ':':
                 if (readNextCharacter('=')) return Word.defined_as;
+                else return new Token(':');
         }
 
         // Digit
