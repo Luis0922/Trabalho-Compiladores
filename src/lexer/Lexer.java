@@ -95,8 +95,10 @@ public class Lexer {
                 else return new Token('>');
             case '|':
                 if (readNextCharacter('|')) return Word.or;
+                else throw new IncompleteValueException("Somente | não faz parte da linguagem");
             case '&':
                 if (readNextCharacter('&')) return Word.and;
+                else throw new IncompleteValueException("Somente & não faz parte da linguagem");
             case ':':
                 if (readNextCharacter('=')) return Word.defined_as;
                 else return new Token(':');
