@@ -72,10 +72,11 @@ public class Lexer {
 
         // Literal
         if (character == '{'){
-            StringBuilder literal = new StringBuilder(String.valueOf(character));
+            StringBuilder literal = new StringBuilder();
+            readNextCharacter();
             while (character != '}'){
-                readNextCharacter();
                 literal.append(character);
+                readNextCharacter();
                 if (EOF) throw new IncompleteValueException(line, "Literal " + literal + "\nmal formado");
             }
             readNextCharacter();
@@ -95,10 +96,10 @@ public class Lexer {
                 else return new Token('>');
             case '|':
                 if (readNextCharacter('|')) return Word.or;
-                else throw new IncompleteValueException(line, "Somente | não faz parte da linguagem");
+                else return new Token('|');
             case '&':
                 if (readNextCharacter('&')) return Word.and;
-                else throw new IncompleteValueException(line, "Somente & não faz parte da linguagem");
+                else return new Token('&');
             case ':':
                 if (readNextCharacter('=')) return Word.defined_as;
                 else return new Token(':');
