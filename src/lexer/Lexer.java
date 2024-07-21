@@ -8,7 +8,7 @@ public class Lexer {
     public static int line = 1; //contador de linhas
     private char character = ' '; //caractere lido do arquivo
     private FileReader file;
-    private boolean EOF;
+    private boolean EOF = false;
     private Hashtable symbolTable = new Hashtable();
 
     /* Método para inserir palavras reservadas na HashTable */
@@ -60,11 +60,16 @@ public class Lexer {
     }
 
     public Token scan() throws Exception {
-        if(EOF){
-            return null;
-        }
         // Desconsidera delimitadores na entrada
         for (;; readNextCharacter()) {
+            if (EOF) {
+                System.out.println("\n\nTabela de Símbolos:\n");
+                for (Object key : symbolTable.keySet()) {
+                    System.out.println(key + " = " + symbolTable.get(key));
+                }
+                return null;
+            }
+
             if (character == ' ' || character == '\t' || character == '\r' || character == '\b') continue;
             else if (character == '\n') line++; // line count
             else break;
