@@ -138,13 +138,13 @@ public class Lexer {
         }
 
         // Identifiers
-        if(Character.isLetterOrDigit(character)){
+        if(Character.isLetterOrDigit(character) || character == '_'){
             StringBuilder stringBuffer = new StringBuilder();
 
             do{
                 stringBuffer.append(character);
                 readNextCharacter();
-            }while(Character.isLetterOrDigit(character));
+            }while(Character.isLetterOrDigit(character) || character == '_');
 
             String string = stringBuffer.toString();
             Word word = (Word)symbolTable.get(string);
