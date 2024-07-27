@@ -46,9 +46,8 @@ public class Lexer {
         int next = file.read();
         if (next == -1) {
             EOF = true;
-        } else {
-            character = (char) next;
         }
+        character = (char) next;
     }
 
     /* Lê o próximo caractere do arquivo e verifica se é igual a nextCharacter*/
@@ -60,16 +59,16 @@ public class Lexer {
     }
 
     public Token scan() throws Exception {
+        if (EOF) {
+            System.out.println("\n\nTabela de Símbolos:\n");
+            for (Object key : symbolTable.keySet()) {
+                System.out.println(key);
+            }
+            return null;
+        }
+
         // Desconsidera delimitadores na entrada
         for (;; readNextCharacter()) {
-            if (EOF) {
-                System.out.println("\n\nTabela de Símbolos:\n");
-                for (Object key : symbolTable.keySet()) {
-                    System.out.println(key + " = " + symbolTable.get(key));
-                }
-                return null;
-            }
-
             if (character == ' ' || character == '\t' || character == '\r' || character == '\b') continue;
             else if (character == '\n') line++; // line count
             else break;
@@ -82,7 +81,8 @@ public class Lexer {
             while (character != '}'){
                 literal.append(character);
                 readNextCharacter();
-                if (EOF) throw new IncompleteValueException(line, "Literal " + literal + "\nmal formado");
+                if (EOF) throw new IncompleteValueException(line, "String não fechada. " +
+                        "Esperado fechamento de chaves( } )\n\n{" + literal);
             }
             readNextCharacter();
             return new Literal(literal.toString());

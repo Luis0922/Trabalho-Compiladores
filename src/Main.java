@@ -14,7 +14,9 @@ public class Main {
                 System.out.println("< " + (char) token.tag + " >");
             }
             else {
-                System.out.println("< " + Tag.getTagName(token.tag) + " , " + token + " >");
+                if(Tag.getTagName(token.tag) != null) {
+                    System.out.println("< " + Tag.getTagName(token.tag) + " , " + token + " >");
+                }
             }
         }
     }
