@@ -10,17 +10,16 @@ public class Tag {
                 VAR = 257,
                 INIT = 258,
                 RETURN = 259,
-                INTEGER = 260,
-                REAL = 261,
-                IF = 262,
-                THEN = 263,
-                END = 264,
-                ELSE = 265,
-                REPEAT = 266,
-                UNTIL = 267,
-                READ = 268,
-                WRITE = 269,
-                LITERAL = 270,
+                BASIC = 260,
+                IF = 261,
+                THEN = 262,
+                END = 263,
+                ELSE = 264,
+                REPEAT = 265,
+                UNTIL = 266,
+                READ = 267,
+                WRITE = 268,
+                LITERAL = 269,
 
                 //Operadores e pontuação
                 DEFINED_AS = 289,
@@ -41,8 +40,6 @@ public class Tag {
         map.put(VAR, "VAR");
         map.put(INIT, "INIT");
         map.put(RETURN, "RETURN");
-        map.put(INTEGER, "INTEGER");
-        map.put(REAL, "REAL");
         map.put(IF, "IF");
         map.put(THEN, "THEN");
         map.put(END, "END");

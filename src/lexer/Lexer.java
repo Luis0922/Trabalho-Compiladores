@@ -30,8 +30,6 @@ public class Lexer {
         addReservedWord(new Word("var", Tag.VAR));
         addReservedWord(new Word("init", Tag.INIT));
         addReservedWord(new Word("return", Tag.RETURN));
-        addReservedWord(new Word("integer", Tag.INTEGER));
-        addReservedWord(new Word("real", Tag.REAL));
         addReservedWord(new Word("else", Tag.ELSE));
         addReservedWord(new Word("then", Tag.THEN));
         addReservedWord(new Word("end", Tag.END));
