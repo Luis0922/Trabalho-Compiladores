@@ -32,14 +32,18 @@ public class Parser {
     }
 
     // Regras da gramática
-    void program() throws Exception {
-        match(Tag.APP);
-        identifier();
-        body();
+    public void program() throws Exception {
+        if(look.tag == Tag.APP) {
+            match(Tag.APP);
+            identifier();
+            body();
+        } else {
+            error("Syntax error: Expect 'APP', but found " + look);
+        }
     }
 
     void body() throws Exception {
-        if (look.tag == '[') {
+        if ((char) look.tag == '[') {
             match('[');
             match(Tag.VAR);
             decl_list();
@@ -58,7 +62,7 @@ public class Parser {
             case Tag.INTEGER:
             case Tag.REAL:
                 decl();
-                while (look.tag == ';') {
+                while ((char) look.tag == ';') {
                     match(';');
                     decl();
                 }
@@ -83,7 +87,7 @@ public class Parser {
     void ident_list() throws Exception {
         if (look.tag == Tag.ID) {
             identifier();
-            while (look.tag == ',') {
+            while ((char) look.tag == ',') {
                 match(',');
                 identifier();
             }
@@ -112,7 +116,7 @@ public class Parser {
             case Tag.READ:
             case Tag.WRITE:
                 stmt();
-                while (look.tag == ';') {
+                while ((char) look.tag == ';') {
                     match(';');
                     stmt();
                 }
@@ -150,7 +154,9 @@ public class Parser {
             match(Tag.DEFINED_AS);
             simple_expr();
         }
-        error("Syntax error: Expect 'ID', but found " + look);
+        else {
+            error("Syntax error: Expect 'ID', but found " + look);
+        }
     }
 
     void if_stmt() throws Exception {
@@ -201,10 +207,10 @@ public class Parser {
 
     void writable() throws Exception {
         switch (look.tag){
-            case :
+            case 'a':
                 simple_expr();
                 break;
-            case :
+            case 'b':
                 literal();
                 break;
             default:
@@ -229,99 +235,77 @@ public class Parser {
     }
 
     void factor_a() throws Exception {
-        switch (look.tag) {
-            case Tag.ID:
-            case Tag.NUM:
-            case Tag.REAL:
-            case '(':
-                factor();
-                break;
-            case '!':
-                match('!');
-                factor();
-                break;
-            case '-':
-                match('-');
-                factor();
-                break;
-            default:
-                error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', or '-', but found " + look);
+        if (look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL || (char) look.tag == '(') {
+            factor();
+        } else if ((char) look.tag == '!') {
+            match('!');
+            factor();
+        } else if ((char) look.tag == '-') {
+            match('-');
+            factor();
+        } else {
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', or '-', but found " + look);
         }
     }
 
     void factor() throws Exception {
-        switch (look.tag) {
-            case Tag.ID:
-                identifier();
-                break;
-            case Tag.NUM:
-            case Tag.REAL:
-                constant();
-                break;
-            case '(':
-                match('(');
-                expression();
-                match(')');
-                break;
-            default:
-                error("Syntax error: Expect 'ID', 'NUM', 'REAL', or '(', but found " + look);
+        if (look.tag == Tag.ID) {
+            identifier();
+        } else if (look.tag == Tag.NUM || look.tag == Tag.REAL) {
+            constant();
+        } else if ((char) look.tag == '(') {
+            match('(');
+            expression();
+            match(')');
+        } else {
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', or '(', but found " + look);
+
         }
     }
 
     void relop() throws Exception {
-        switch (look.tag){
-            case '=':
-                match('=');
-                break;
-            case '>':
-                match('>');
-                break;
-            case Tag.BIG_EQUAL:
-                // ou match('>'); match('=');
-                match(Tag.BIG_EQUAL);
-                break;
-            case '<':
-                match('<');
-                break;
-            case Tag.LEAST_EQUAL:
-                match(Tag.LEAST_EQUAL);
-                break;
-            case Tag.NOT_EQUAL:
-                match(Tag.NOT_EQUAL);
-            default:
-                error("Syntax error: Expect '=', '>', '>=', '<', '<=', or '<>', but found " + look);
+        if ((char) look.tag == '=') {
+            match('=');
+        } else if ((char) look.tag == '>') {
+            match('>');
+        } else if (look.tag == Tag.BIG_EQUAL) {
+            match('>');
+            move();
+            match('=');
+        } else if ((char) look.tag == '<') {
+            match('<');
+        } else if (look.tag == Tag.LEAST_EQUAL) {
+            match('<');
+            move();
+            match('=');
+        } else if (look.tag == Tag.NOT_EQUAL) {
+            match(Tag.NOT_EQUAL);
+        } else {
+            error("Syntax error: Expect '=', '>', or '<', but found " + look);
         }
     }
 
     void addop() throws Exception {
-        switch (look.tag) {
-            case '+':
-                match('+');
-                break;
-            case '-':
-                match('-');
-                break;
-            case Tag.OR:
-                match(Tag.OR);
-                break;
-            default:
-                error("Syntax error: Expect '+', '-', or '||', but found " + look);
+        if ((char) look.tag == '+') {
+            match('+');
+        } else if ((char) look.tag == '-') {
+            match('-');
+        } else if (look.tag == Tag.OR) {
+            match(Tag.OR);
+        } else {
+            error("Syntax error: Expect '+', '-', or '||', but found " + look);
         }
     }
 
     void mulop() throws Exception {
-        switch (look.tag) {
-            case '*':
-                match('*');
-                break;
-            case '/':
-                match('/');
-                break;
-            case Tag.AND:
-                match(Tag.AND);
-                break;
-            default:
-                error("Syntax error: Expect '*', '/', or '&&', but found " + look);
+        if ((char) look.tag == '*') {
+            match('*');
+        } else if ((char) look.tag == '/') {
+            match('/');
+        } else if (look.tag == Tag.AND) {
+            match(Tag.AND);
+        } else {
+            error("Syntax error: Expect '*', '/', or '&&', but found " + look);
         }
     }
 
