@@ -1,7 +1,7 @@
 app pessoa
     [var
         integer cont;
-        real altura, soma;]
+        real altura, soma]
     init
         cont := 5;
         soma := 0;

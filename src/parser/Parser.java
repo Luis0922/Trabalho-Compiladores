@@ -16,6 +16,7 @@ public class Parser {
     }
 
     void move() throws Exception{
+        System.out.println(look);
         look = lex.scan();
     }
 
@@ -38,7 +39,7 @@ public class Parser {
             identifier();
             body();
         } else {
-            error("Syntax error: Expect 'APP', but found " + look);
+            error("Syntax error: Expect 'APP', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -52,7 +53,7 @@ public class Parser {
             stmt_list();
             match(Tag.RETURN);
         } else {
-            error("Syntax error: Expect '[', but found " + look);
+            error("Syntax error: Expect '[', but found " + Tag.getTagName(look.tag));
         }
 
     }
@@ -68,7 +69,7 @@ public class Parser {
                 }
                 break;
             default:
-                error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + look);
+                error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -80,7 +81,7 @@ public class Parser {
                 ident_list();
                 break;
             default:
-                error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + look);
+                error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -92,7 +93,9 @@ public class Parser {
                 identifier();
             }
         }
-        error("Syntax error: Expect 'ID', but found " + look);
+        else {
+            error("Syntax error: Expect 'ID', but found " + Tag.getTagName(look.tag));
+        }
     }
 
     void type() throws Exception {
@@ -104,7 +107,7 @@ public class Parser {
                 match(Tag.REAL);
                 break;
             default:
-                error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + look);
+                error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -122,7 +125,7 @@ public class Parser {
                 }
                 break;
             default:
-                error("Syntax error: Expect 'ID', 'IF', 'REPEAT', 'READ' or 'WRITE', but found " + look);
+                error("Syntax error: Expect 'ID', 'IF', 'REPEAT', 'READ' or 'WRITE', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -144,7 +147,7 @@ public class Parser {
                 write_stmt();
                 break;
             default:
-                error("Syntax error: Expect 'ID', 'IF', 'REPEAT', 'READ' or 'WRITE', but found " + look);
+                error("Syntax error: Expect 'ID', 'IF', 'REPEAT', 'READ' or 'WRITE', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -155,7 +158,7 @@ public class Parser {
             simple_expr();
         }
         else {
-            error("Syntax error: Expect 'ID', but found " + look);
+            error("Syntax error: Expect 'ID', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -169,7 +172,7 @@ public class Parser {
             stmt_list();
             stmt_suffix();
         } else {
-            error("Syntax error: Expect 'REPEAT', but found " + look);
+            error("Syntax error: Expect 'REPEAT', but found " + Tag.getTagName(look.tag));
         }
 
     }
@@ -179,7 +182,7 @@ public class Parser {
             match(Tag.UNTIL);
             condition();
         } else {
-            error("Syntax error: Expect 'UNTIL', but found " + look);
+            error("Syntax error: Expect 'UNTIL', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -190,7 +193,7 @@ public class Parser {
             identifier();
             match(')');
         } else {
-            error("Syntax error: Expect 'READ', but found " + look);
+            error("Syntax error: Expect 'READ', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -201,7 +204,7 @@ public class Parser {
             writable();
             match(')');
         } else {
-            error("Syntax error: Expect 'WRITE', but found " + look);
+            error("Syntax error: Expect 'WRITE', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -244,7 +247,7 @@ public class Parser {
             match('-');
             factor();
         } else {
-            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', or '-', but found " + look);
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', or '-', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -258,7 +261,7 @@ public class Parser {
             expression();
             match(')');
         } else {
-            error("Syntax error: Expect 'ID', 'NUM', 'REAL', or '(', but found " + look);
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', or '(', but found " + Tag.getTagName(look.tag));
 
         }
     }
@@ -281,7 +284,7 @@ public class Parser {
         } else if (look.tag == Tag.NOT_EQUAL) {
             match(Tag.NOT_EQUAL);
         } else {
-            error("Syntax error: Expect '=', '>', or '<', but found " + look);
+            error("Syntax error: Expect '=', '>', or '<', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -293,7 +296,7 @@ public class Parser {
         } else if (look.tag == Tag.OR) {
             match(Tag.OR);
         } else {
-            error("Syntax error: Expect '+', '-', or '||', but found " + look);
+            error("Syntax error: Expect '+', '-', or '||', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -305,7 +308,7 @@ public class Parser {
         } else if (look.tag == Tag.AND) {
             match(Tag.AND);
         } else {
-            error("Syntax error: Expect '*', '/', or '&&', but found " + look);
+            error("Syntax error: Expect '*', '/', or '&&', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -318,7 +321,7 @@ public class Parser {
                 float_const();
                 break;
             default:
-                error("Syntax error: Expect 'NUM' or 'REAL', but found " + look);
+                error("Syntax error: Expect 'NUM' or 'REAL', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -326,7 +329,7 @@ public class Parser {
         if (look.tag == Tag.NUM) {
             match(Tag.NUM);
         } else {
-            error("Syntax error: Expect 'NUM', but found " + look);
+            error("Syntax error: Expect 'NUM', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -334,7 +337,7 @@ public class Parser {
         if (look.tag == Tag.REAL) {
             match(Tag.REAL);
         } else {
-            error("Syntax error: Expect 'REAL', but found " + look);
+            error("Syntax error: Expect 'REAL', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -342,7 +345,7 @@ public class Parser {
         if (look.tag == Tag.LITERAL) {
             match(Tag.LITERAL);
         } else {
-            error("Syntax error: Expect 'LITERAL', but found " + look);
+            error("Syntax error: Expect 'LITERAL', but found " + Tag.getTagName(look.tag));
         }
     }
 
@@ -350,7 +353,7 @@ public class Parser {
         if (look.tag == Tag.ID) {
             match(Tag.ID);
         } else {
-            error("Syntax error: Expect 'ID', but found " + look);
+            error("Syntax error: Expect 'ID', but found " + Tag.getTagName(look.tag));
         }
     }
 }

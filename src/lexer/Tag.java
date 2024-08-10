@@ -1,5 +1,6 @@
 package lexer;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,8 +63,8 @@ public class Tag {
         map.put(LITERAL, "LITERAL");
     }
 
-    public static String getTagName(int value) {
-        return map.get(value);
+    public static Serializable getTagName(int value) {
+        return map.get(value) == null ? (char) value : map.get(value);
     }
 }
 
