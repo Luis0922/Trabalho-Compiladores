@@ -44,16 +44,16 @@ public class Parser {
     }
 
     void body() throws Exception {
-        if ((char) look.tag == '[') {
-            match('[');
-            match(Tag.VAR);
-            decl_list();
-            match(']');
+        if (look.tag == Tag.VAR || look.tag == Tag.INIT) {
+            if (look.tag == Tag.VAR) {
+                match(Tag.VAR);
+                decl_list();
+            }
             match(Tag.INIT);
             stmt_list();
             match(Tag.RETURN);
         } else {
-            error("Syntax error: Expect '[', but found " + Tag.getTagName(look.tag));
+            error("Syntax error: Expect 'VAR' or 'INIT', but found " + Tag.getTagName(look.tag));
         }
 
     }
