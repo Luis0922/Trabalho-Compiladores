@@ -1,17 +1,17 @@
-app pessoa
-    var
-        integer cont;
-        real altura, soma
-    init
-        soma := soma + altura;
-        soma := 0;
-        repeat
-            write({Altura: });
-            read (altura);
-            soma := soma + altura;
-            cont := cont - 1;
-        until(cont=0);
-        media := soma / 5;
-        write({Media: });
-        write (media);
-        return
+app exemplo
+  var
+    integer a, b;
+    real c
+  init
+    a := 10;
+    b := 20;
+    read(c);
+    if a > b then
+      write("A é maior que B");
+    else
+      repeat
+        a := a + 1;
+        write(a);
+      until a >= b;
+    end;
+  return

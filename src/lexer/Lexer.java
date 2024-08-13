@@ -60,10 +60,6 @@ public class Lexer {
 
     public Token scan() throws Exception {
         if (EOF) {
-            System.out.println("\n\nTabela de Símbolos:\n");
-            for (Object key : symbolTable.keySet()) {
-                System.out.println(key);
-            }
             return null;
         }
 
