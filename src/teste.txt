@@ -1,12 +1,12 @@
 app pessoa
-    [var
+    var
         integer cont;
-        real altura, soma]
+        real altura, soma
     init
-        cont := 5;
+        soma := soma + altura;
         soma := 0;
         repeat
-            write(Altura: );
+            write({Altura: });
             read (altura);
             soma := soma + altura;
             cont := cont - 1;

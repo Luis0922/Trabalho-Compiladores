@@ -16,7 +16,9 @@ public class Parser {
     }
 
     void move() throws Exception{
-        System.out.println(look);
+        if(look != null){
+            System.out.println(Tag.getTagName(look.tag));
+        }
         look = lex.scan();
     }
 
@@ -163,7 +165,27 @@ public class Parser {
     }
 
     void if_stmt() throws Exception {
+        if (look.tag == Tag.IF) {
+            match(Tag.IF);
+            condition();
+            match(Tag.THEN);
+            stmt_list();
+            if_stmt_();
+        } else {
+            error("Syntax error: Expect 'IF', but found " + Tag.getTagName(look.tag));
+        }
+    }
 
+    void if_stmt_() throws Exception {
+        if(look.tag == Tag.ELSE) {
+            match(Tag.ELSE);
+            stmt_list();
+            match(Tag.END);
+        } else if(look.tag == Tag.END) {
+            match(Tag.END);
+        } else {
+            error("Syntax error: Expect 'ELSE' or 'END', but found " + Tag.getTagName(look.tag));
+        }
     }
 
     void repeat_stmt() throws Exception {
@@ -209,32 +231,92 @@ public class Parser {
     }
 
     void writable() throws Exception {
-        switch (look.tag){
-            case 'a':
-                simple_expr();
-                break;
-            case 'b':
-                literal();
-                break;
-            default:
-
+        if (look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL ||
+                (char) look.tag == '(' || (char) look.tag == '!' || (char) look.tag == '-' ||
+                (char) look.tag == '*' || (char) look.tag == '/' || look.tag == Tag.AND ||
+                (char) look.tag == '+' || look.tag == Tag.OR) {
+            simple_expr_();
+        } else if (look.tag == Tag.LITERAL) {
+            literal();
+        } else {
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', '&&', '+', '||', or 'LITERAL', but found " + Tag.getTagName(look.tag));
         }
     }
 
     void condition() throws Exception {
-        expression();
+        if (look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL ||
+                (char) look.tag == '(' || (char) look.tag == '!' || (char) look.tag == '-' ||
+                (char) look.tag == '*' || (char) look.tag == '/' || look.tag == Tag.AND ||
+                (char) look.tag == '+' || look.tag == Tag.OR) {
+            expression();
+        } else {
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', or '&&', but found " + Tag.getTagName(look.tag));
+        }
     }
 
     void expression() throws Exception {
+        if (look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL ||
+                (char) look.tag == '(' || (char) look.tag == '!' || (char) look.tag == '-') {
+            simple_expr();
+            expression_();
+        } else {
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', or '&&', but found " + Tag.getTagName(look.tag));
+        }
+    }
 
+    void expression_() throws Exception {
+        if (look.tag == Tag.RETURN) {
+
+        } else if ((char) look.tag == '=' || (char) look.tag == '>' || look.tag == Tag.BIG_EQUAL ||
+                (char) look.tag == '<' || look.tag == Tag.LEAST_EQUAL || look.tag == Tag.NOT_EQUAL) {
+            relop();
+            simple_expr_();
+        } else {
+            error("Syntax error: Expect '=', '>', '<', '>=', '<=', or '<>', but found " + Tag.getTagName(look.tag));
+        }
     }
 
     void simple_expr() throws Exception {
+        if (look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL ||
+                (char) look.tag == '(' || (char) look.tag == '!' || (char) look.tag == '-') {
+            term();
+            simple_expr_();
+        } else {
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', '&&', '+' or '||' , but found " + Tag.getTagName(look.tag));
+        }
+    }
 
+    void simple_expr_() throws Exception {
+        if ((char) look.tag == '=' || (char) look.tag == '>' || look.tag == Tag.BIG_EQUAL ||
+                (char) look.tag == '<' || look.tag == Tag.LEAST_EQUAL || look.tag == Tag.NOT_EQUAL || look.tag == Tag.RETURN) {
+
+        } else if ((char) look.tag == '+' || (char) look.tag == '-' || look.tag == Tag.OR) {
+            addop();
+            term();
+        } else {
+            error("Syntax error: Expect '+', '-', or '||', but found " + Tag.getTagName(look.tag));
+        }
     }
 
     void term() throws Exception {
+        if (look.tag == Tag.ID || look.tag == Tag.NUM || look.tag == Tag.REAL ||
+                (char) look.tag == '(' || (char) look.tag == '!' || (char) look.tag == '-') {
+            factor_a();
+            term_();
+        } else {
+            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', or '&&', but found " + Tag.getTagName(look.tag));
+        }
+    }
 
+    void term_() throws Exception {
+        if ((char) look.tag == '+' || (char) look.tag == '-' || look.tag == Tag.OR) {
+
+        } else if ((char) look.tag == '*' || (char) look.tag == '/' || look.tag == Tag.AND) {
+            mulop();
+            factor_a();
+        } else {
+            error("Syntax error: Expect '*', '/', or '&&', but found " + Tag.getTagName(look.tag));
+        }
     }
 
     void factor_a() throws Exception {
