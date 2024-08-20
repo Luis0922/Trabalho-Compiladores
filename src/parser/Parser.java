@@ -233,7 +233,7 @@ public class Parser {
     void writable() throws Exception {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
-            simple_expr_();
+            simple_expr();
         } else if (token.tag == Tag.LITERAL) {
             literal();
         } else {
@@ -261,7 +261,7 @@ public class Parser {
     }
 
     void expression_() throws Exception {
-        if (token.tag == Tag.RETURN || (char) token.tag == ';') {
+        if (token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == ')') {
 
         } else if ((char) token.tag == '=' || (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||
                 (char) token.tag == '<' || token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL) {
@@ -285,7 +285,8 @@ public class Parser {
     void simple_expr_() throws Exception {
         if ((token.tag == Tag.RETURN || (char) token.tag == ';') || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL || (char) token.tag == '<' ||
-                token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN) {
+                token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
+                (char) token.tag == ')') {
 
         } else if ((char) token.tag == '+' || (char) token.tag == '-' || token.tag == Tag.OR) {
             addop();
@@ -310,7 +311,8 @@ public class Parser {
         if ((char) token.tag == '+' || (char) token.tag == '-' || token.tag == Tag.OR ||
                 token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||  (char) token.tag == '<' ||
-                token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN) {
+                token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
+                (char) token.tag == ')') {
 
         } else if ((char) token.tag == '*' || (char) token.tag == '/' || token.tag == Tag.AND) {
             mulop();
