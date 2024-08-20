@@ -1,17 +1,6 @@
-app exemplo
-  var
-    integer a, b;
-    real c
-  init
-    a := 10;
-    b := 20;
-    read(c);
-    if a > b then
-      write("A é maior que B");
-    else
-      repeat
-        a := a + 1;
-        write(a);
-      until a >= b;
-    end;
-  return
+app teste2
+init
+b := b + a/2 * (3 + 5);
+write(f);
+write(b);
+return
