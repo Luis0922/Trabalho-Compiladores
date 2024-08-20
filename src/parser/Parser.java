@@ -290,6 +290,7 @@ public class Parser {
         } else if ((char) token.tag == '+' || (char) token.tag == '-' || token.tag == Tag.OR) {
             addop();
             term();
+            simple_expr_();
         } else {
             error("Syntax error: Expect '+', '-', or '||', but found " + Tag.getTagName(token.tag));
         }
