@@ -94,16 +94,16 @@ public class Lexer {
                 else return new Token('>');
             case '<':
                 if (readNextCharacter('=')) return Word.least_equal;
-                else return new Token('>');
+                else return new Token('<');
             case '|':
                 if (readNextCharacter('|')) return Word.or;
-                else return new Token('|');
+                else throw new IncompleteValueException(line, "Está faltando um | para completar o operador lógico ||.");
             case '&':
                 if (readNextCharacter('&')) return Word.and;
-                else return new Token('&');
+                else throw new IncompleteValueException(line, "Está faltando um & para completar o operador lógico &&.");
             case ':':
                 if (readNextCharacter('=')) return Word.defined_as;
-                else return new Token(':');
+                else throw new IncompleteValueException(line, "Está faltando um = para completar o operador lógico :=.");
         }
 
         // Digit

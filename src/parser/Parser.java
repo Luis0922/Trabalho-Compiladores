@@ -261,7 +261,7 @@ public class Parser {
     }
 
     void expression_() throws Exception {
-        if (token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == ')') {
+        if (token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == ')' || token.tag == Tag.THEN) {
 
         } else if ((char) token.tag == '=' || (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||
                 (char) token.tag == '<' || token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL) {
@@ -286,7 +286,7 @@ public class Parser {
         if ((token.tag == Tag.RETURN || (char) token.tag == ';') || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL || (char) token.tag == '<' ||
                 token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
-                (char) token.tag == ')') {
+                (char) token.tag == ')' || token.tag == Tag.UNTIL) {
 
         } else if ((char) token.tag == '+' || (char) token.tag == '-' || token.tag == Tag.OR) {
             addop();
@@ -312,7 +312,7 @@ public class Parser {
                 token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||  (char) token.tag == '<' ||
                 token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
-                (char) token.tag == ')') {
+                (char) token.tag == ')' || token.tag == Tag.UNTIL) {
 
         } else if ((char) token.tag == '*' || (char) token.tag == '/' || token.tag == Tag.AND) {
             mulop();

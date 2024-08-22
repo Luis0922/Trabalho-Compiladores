@@ -1,6 +1,14 @@
-app teste2
+app Teste5
+var
+integer j, k;
+real result
 init
-b := b + a/2 * (3 + 5);
-write(f);
-write(b);
+read(j);
+read(k);
+if (k >= 0) then
+result := j/k;
+else
+result := 0;
+end
+write(result)
 return
