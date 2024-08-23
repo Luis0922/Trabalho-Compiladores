@@ -6,6 +6,6 @@ public class Main {
         var lexer = new Lexer("./src/teste.txt");
         Parser parser = new Parser(lexer);
         parser.program();
-        System.out.println("fim");
+        System.out.println("Arquivo lido com sucesso!");
     }
 }

@@ -18,9 +18,6 @@ public class Parser {
     }
 
     void move() throws IOException{
-        if(token != null){
-            System.out.println(Tag.getTagName(token.tag));
-        }
         token = lex.scan();
     }
 
