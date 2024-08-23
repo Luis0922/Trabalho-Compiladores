@@ -70,6 +70,14 @@ public class Lexer {
             else break;
         }
 
+        // Comments
+        if(character == '%') {
+            while(character != '\n') {
+                readNextCharacter();
+            }
+            readNextCharacter();
+        }
+
         // Literal
         if (character == '{'){
             StringBuilder literal = new StringBuilder();

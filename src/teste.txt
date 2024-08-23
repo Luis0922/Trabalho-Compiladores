@@ -1,22 +1,22 @@
 app teste6
 var
-%program teste asodkaosdk oskoekof sdofksofkdso sdofksofdk \n
-integer a, b, c, maior;
+% program tet ste asodkaosdk oskoekof sdofksofkdso sdofksofdk \n
+integer a, b, c, maior
 init
 read(a);
 read(b);
 read(c);
 maior := 0;
 %Calcula a maior idade
-if ( a>b && a>c ) then
-maior := a;
+if ( a>b && (a>c) ) then
+maior := a
 else
 if (b>c) then
-maior := b;
+maior := b
 else
-maior := c;
+maior := c
 end
-end
+end;
 write({Maior idade: });
-write(maior);
+write(maior)
 return
