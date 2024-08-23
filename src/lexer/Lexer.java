@@ -63,19 +63,19 @@ public class Lexer {
             return null;
         }
 
-        // Desconsidera delimitadores na entrada
+        // Desconsidera delimitadores e comentarios na entrada
         for (;; readNextCharacter()) {
             if (character == ' ' || character == '\t' || character == '\r' || character == '\b') continue;
             else if (character == '\n') line++; // line count
-            else break;
-        }
-
-        // Comments
-        if(character == '%') {
-            while(character != '\n') {
+            // Comments
+            else if(character == '%') {
+                readNextCharacter();
+                while(character != '\n') {
+                    readNextCharacter();
+                }
                 readNextCharacter();
             }
-            readNextCharacter();
+            else break;
         }
 
         // Literal
