@@ -53,10 +53,12 @@ public class Parser {
             eat(Tag.INIT);
             stmt_list();
             eat(Tag.RETURN);
+            if(token != null) {
+                error("Syntax error: Expect end of file, but found " + Tag.getTagName(token.tag));
+            }
         } else {
             error("Syntax error: Expect 'VAR' or 'INIT', but found " + Tag.getTagName(token.tag));
         }
-
     }
 
     void decl_list() throws IOException {
