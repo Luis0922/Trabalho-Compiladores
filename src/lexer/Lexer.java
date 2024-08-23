@@ -73,6 +73,7 @@ public class Lexer {
                 while(character != '\n') {
                     readNextCharacter();
                 }
+                line++;
                 readNextCharacter();
             }
             else break;
