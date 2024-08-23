@@ -59,10 +59,6 @@ public class Lexer {
     }
 
     public Token scan() throws IOException {
-        if (EOF) {
-            return null;
-        }
-
         // Desconsidera delimitadores e comentarios na entrada
         for (;; readNextCharacter()) {
             if (character == ' ' || character == '\t' || character == '\r' || character == '\b') continue;
@@ -77,6 +73,10 @@ public class Lexer {
                 readNextCharacter();
             }
             else break;
+        }
+
+        if (EOF) {
+            return null;
         }
 
         // Literal
