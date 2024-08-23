@@ -288,7 +288,7 @@ public class Parser {
         if ((token.tag == Tag.RETURN || (char) token.tag == ';') || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL || (char) token.tag == '<' ||
                 token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
-                (char) token.tag == ')' || token.tag == Tag.UNTIL) {
+                (char) token.tag == ')' || token.tag == Tag.UNTIL || token.tag == Tag.ELSE || token.tag == Tag.END) {
 
         } else if ((char) token.tag == '+' || (char) token.tag == '-' || token.tag == Tag.OR) {
             addop();
@@ -314,7 +314,7 @@ public class Parser {
                 token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||  (char) token.tag == '<' ||
                 token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
-                (char) token.tag == ')' || token.tag == Tag.UNTIL) {
+                (char) token.tag == ')' || token.tag == Tag.UNTIL || token.tag == Tag.ELSE || token.tag == Tag.END) {
 
         } else if ((char) token.tag == '*' || (char) token.tag == '/' || token.tag == Tag.AND) {
             mulop();
@@ -359,15 +359,11 @@ public class Parser {
         } else if ((char) token.tag == '>') {
             eat('>');
         } else if (token.tag == Tag.BIG_EQUAL) {
-            eat('>');
-            move();
-            eat('=');
+            eat(Tag.BIG_EQUAL);
         } else if ((char) token.tag == '<') {
             eat('<');
         } else if (token.tag == Tag.LEAST_EQUAL) {
-            eat('<');
-            move();
-            eat('=');
+            eat(Tag.LEAST_EQUAL);
         } else if (token.tag == Tag.NOT_EQUAL) {
             eat(Tag.NOT_EQUAL);
         } else {
