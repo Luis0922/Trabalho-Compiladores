@@ -2,6 +2,8 @@ package parser;
 
 import lexer.*;
 
+import java.io.IOException;
+
 public class Parser {
 
     private Lexer lex;
@@ -10,12 +12,12 @@ public class Parser {
 
     int used = 0;
 
-    public Parser(Lexer l) throws Exception{
+    public Parser(Lexer l) throws IOException {
         lex = l;
         move();
     }
 
-    void move() throws Exception{
+    void move() throws IOException{
         if(token != null){
             System.out.println(Tag.getTagName(token.tag));
         }
@@ -26,7 +28,7 @@ public class Parser {
         throw new Error("near line " + lex.line + ": " + s);
     }
 
-    void match(int t) throws Exception{
+    void eat(int t) throws IOException{
         if(token.tag == t){
             move();
         } else {
@@ -35,9 +37,9 @@ public class Parser {
     }
 
     // Regras da gramática
-    public void program() throws Exception {
+    public void program() throws IOException {
         if(token.tag == Tag.APP) {
-            match(Tag.APP);
+            eat(Tag.APP);
             identifier();
             body();
         } else {
@@ -45,28 +47,28 @@ public class Parser {
         }
     }
 
-    void body() throws Exception {
+    void body() throws IOException {
         if (token.tag == Tag.VAR || token.tag == Tag.INIT) {
             if (token.tag == Tag.VAR) {
-                match(Tag.VAR);
+                eat(Tag.VAR);
                 decl_list();
             }
-            match(Tag.INIT);
+            eat(Tag.INIT);
             stmt_list();
-            match(Tag.RETURN);
+            eat(Tag.RETURN);
         } else {
             error("Syntax error: Expect 'VAR' or 'INIT', but found " + Tag.getTagName(token.tag));
         }
 
     }
 
-    void decl_list() throws Exception {
+    void decl_list() throws IOException {
         switch(token.tag) {
             case Tag.INTEGER:
             case Tag.REAL:
                 decl();
                 while ((char) token.tag == ';') {
-                    match(';');
+                    eat(';');
                     decl();
                 }
                 break;
@@ -75,7 +77,7 @@ public class Parser {
         }
     }
 
-    void decl() throws Exception {
+    void decl() throws IOException {
         switch(token.tag) {
             case Tag.INTEGER:
             case Tag.REAL:
@@ -87,11 +89,11 @@ public class Parser {
         }
     }
 
-    void ident_list() throws Exception {
+    void ident_list() throws IOException {
         if (token.tag == Tag.ID) {
             identifier();
             while ((char) token.tag == ',') {
-                match(',');
+                eat(',');
                 identifier();
             }
         }
@@ -100,20 +102,20 @@ public class Parser {
         }
     }
 
-    void type() throws Exception {
+    void type() throws IOException {
         switch (token.tag){
             case Tag.INTEGER:
-                match(Tag.INTEGER);
+                eat(Tag.INTEGER);
                 break;
             case Tag.REAL:
-                match(Tag.REAL);
+                eat(Tag.REAL);
                 break;
             default:
                 error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void stmt_list() throws Exception {
+    void stmt_list() throws IOException {
         switch(token.tag) {
             case Tag.ID:
             case Tag.IF:
@@ -122,7 +124,7 @@ public class Parser {
             case Tag.WRITE:
                 stmt();
                 while ((char) token.tag == ';') {
-                    match(';');
+                    eat(';');
                     stmt();
                 }
                 break;
@@ -131,7 +133,7 @@ public class Parser {
         }
     }
 
-    void stmt() throws Exception {
+    void stmt() throws IOException {
         switch (token.tag) {
             case Tag.ID:
                 assign_stmt();
@@ -153,10 +155,10 @@ public class Parser {
         }
     }
 
-    void assign_stmt() throws Exception {
+    void assign_stmt() throws IOException {
         if (token.tag == Tag.ID) {
             identifier();
-            match(Tag.DEFINED_AS);
+            eat(Tag.DEFINED_AS);
             simple_expr();
         }
         else {
@@ -164,11 +166,11 @@ public class Parser {
         }
     }
 
-    void if_stmt() throws Exception {
+    void if_stmt() throws IOException {
         if (token.tag == Tag.IF) {
-            match(Tag.IF);
+            eat(Tag.IF);
             condition();
-            match(Tag.THEN);
+            eat(Tag.THEN);
             stmt_list();
             if_stmt_();
         } else {
@@ -176,21 +178,21 @@ public class Parser {
         }
     }
 
-    void if_stmt_() throws Exception {
+    void if_stmt_() throws IOException {
         if(token.tag == Tag.ELSE) {
-            match(Tag.ELSE);
+            eat(Tag.ELSE);
             stmt_list();
-            match(Tag.END);
+            eat(Tag.END);
         } else if(token.tag == Tag.END) {
-            match(Tag.END);
+            eat(Tag.END);
         } else {
             error("Syntax error: Expect 'ELSE' or 'END', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void repeat_stmt() throws Exception {
+    void repeat_stmt() throws IOException {
         if (token.tag == Tag.REPEAT) {
-            match(Tag.REPEAT);
+            eat(Tag.REPEAT);
             stmt_list();
             stmt_suffix();
         } else {
@@ -199,38 +201,38 @@ public class Parser {
 
     }
 
-    void stmt_suffix() throws Exception {
+    void stmt_suffix() throws IOException {
         if(token.tag == Tag.UNTIL) {
-            match(Tag.UNTIL);
+            eat(Tag.UNTIL);
             condition();
         } else {
             error("Syntax error: Expect 'UNTIL', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void read_stmt() throws Exception {
+    void read_stmt() throws IOException {
         if(token.tag == Tag.READ) {
-            match(Tag.READ);
-            match('(');
+            eat(Tag.READ);
+            eat('(');
             identifier();
-            match(')');
+            eat(')');
         } else {
             error("Syntax error: Expect 'READ', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void write_stmt() throws Exception {
+    void write_stmt() throws IOException {
         if (token.tag == Tag.WRITE) {
-            match(Tag.WRITE);
-            match('(');
+            eat(Tag.WRITE);
+            eat('(');
             writable();
-            match(')');
+            eat(')');
         } else {
             error("Syntax error: Expect 'WRITE', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void writable() throws Exception {
+    void writable() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
             simple_expr();
@@ -241,7 +243,7 @@ public class Parser {
         }
     }
 
-    void condition() throws Exception {
+    void condition() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-')  {
             expression();
@@ -250,7 +252,7 @@ public class Parser {
         }
     }
 
-    void expression() throws Exception {
+    void expression() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
             simple_expr();
@@ -260,7 +262,7 @@ public class Parser {
         }
     }
 
-    void expression_() throws Exception {
+    void expression_() throws IOException {
         if (token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == ')' || token.tag == Tag.THEN) {
 
         } else if ((char) token.tag == '=' || (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||
@@ -272,7 +274,7 @@ public class Parser {
         }
     }
 
-    void simple_expr() throws Exception {
+    void simple_expr() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
             term();
@@ -282,7 +284,7 @@ public class Parser {
         }
     }
 
-    void simple_expr_() throws Exception {
+    void simple_expr_() throws IOException {
         if ((token.tag == Tag.RETURN || (char) token.tag == ';') || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL || (char) token.tag == '<' ||
                 token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
@@ -297,7 +299,7 @@ public class Parser {
         }
     }
 
-    void term() throws Exception {
+    void term() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
             factor_a();
@@ -307,7 +309,7 @@ public class Parser {
         }
     }
 
-    void term_() throws Exception {
+    void term_() throws IOException {
         if ((char) token.tag == '+' || (char) token.tag == '-' || token.tag == Tag.OR ||
                 token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||  (char) token.tag == '<' ||
@@ -323,81 +325,81 @@ public class Parser {
         }
     }
 
-    void factor_a() throws Exception {
+    void factor_a() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL || (char) token.tag == '(') {
             factor();
         } else if ((char) token.tag == '!') {
-            match('!');
+            eat('!');
             factor();
         } else if ((char) token.tag == '-') {
-            match('-');
+            eat('-');
             factor();
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', or '-', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void factor() throws Exception {
+    void factor() throws IOException {
         if (token.tag == Tag.ID) {
             identifier();
         } else if (token.tag == Tag.NUM || token.tag == Tag.REAL) {
             constant();
         } else if ((char) token.tag == '(') {
-            match('(');
+            eat('(');
             expression();
-            match(')');
+            eat(')');
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', or '(', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void relop() throws Exception {
+    void relop() throws IOException {
         if ((char) token.tag == '=') {
-            match('=');
+            eat('=');
         } else if ((char) token.tag == '>') {
-            match('>');
+            eat('>');
         } else if (token.tag == Tag.BIG_EQUAL) {
-            match('>');
+            eat('>');
             move();
-            match('=');
+            eat('=');
         } else if ((char) token.tag == '<') {
-            match('<');
+            eat('<');
         } else if (token.tag == Tag.LEAST_EQUAL) {
-            match('<');
+            eat('<');
             move();
-            match('=');
+            eat('=');
         } else if (token.tag == Tag.NOT_EQUAL) {
-            match(Tag.NOT_EQUAL);
+            eat(Tag.NOT_EQUAL);
         } else {
             error("Syntax error: Expect '=', '>', or '<', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void addop() throws Exception {
+    void addop() throws IOException {
         if ((char) token.tag == '+') {
-            match('+');
+            eat('+');
         } else if ((char) token.tag == '-') {
-            match('-');
+            eat('-');
         } else if (token.tag == Tag.OR) {
-            match(Tag.OR);
+            eat(Tag.OR);
         } else {
             error("Syntax error: Expect '+', '-', or '||', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void mulop() throws Exception {
+    void mulop() throws IOException {
         if ((char) token.tag == '*') {
-            match('*');
+            eat('*');
         } else if ((char) token.tag == '/') {
-            match('/');
+            eat('/');
         } else if (token.tag == Tag.AND) {
-            match(Tag.AND);
+            eat(Tag.AND);
         } else {
             error("Syntax error: Expect '*', '/', or '&&', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void constant() throws Exception {
+    void constant() throws IOException {
         switch (token.tag) {
             case Tag.NUM:
                 integer_const();
@@ -410,33 +412,33 @@ public class Parser {
         }
     }
 
-    void integer_const() throws Exception {
+    void integer_const() throws IOException {
         if (token.tag == Tag.NUM) {
-            match(Tag.NUM);
+            eat(Tag.NUM);
         } else {
             error("Syntax error: Expect 'NUM', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void float_const() throws Exception {
+    void float_const() throws IOException {
         if (token.tag == Tag.REAL) {
-            match(Tag.REAL);
+            eat(Tag.REAL);
         } else {
             error("Syntax error: Expect 'REAL', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void literal() throws Exception {
+    void literal() throws IOException {
         if (token.tag == Tag.LITERAL) {
-            match(Tag.LITERAL);
+            eat(Tag.LITERAL);
         } else {
             error("Syntax error: Expect 'LITERAL', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void identifier() throws Exception {
+    void identifier() throws IOException {
         if (token.tag == Tag.ID) {
-            match(Tag.ID);
+            eat(Tag.ID);
         } else {
             error("Syntax error: Expect 'ID', but found " + Tag.getTagName(token.tag));
         }

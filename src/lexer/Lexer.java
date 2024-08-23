@@ -58,7 +58,7 @@ public class Lexer {
         return true;
     }
 
-    public Token scan() throws Exception {
+    public Token scan() throws IOException {
         if (EOF) {
             return null;
         }
