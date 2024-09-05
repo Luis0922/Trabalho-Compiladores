@@ -1,14 +1,13 @@
 package parser;
 
-import lexer.*;
-
 import java.io.IOException;
+import lexer.*;
 
 public class Parser {
 
-    private Lexer lex;
+    protected Lexer lex;
 
-    private Token token;
+    protected Token token;
 
     int used = 0;
 
@@ -115,12 +114,18 @@ public class Parser {
     }
 
     void stmt_list() throws IOException {
+        if (token == null) {
+            error("Unexpected end of input");
+            return;
+        }
+    
         switch(token.tag) {
             case Tag.ID:
             case Tag.IF:
             case Tag.REPEAT:
             case Tag.READ:
             case Tag.WRITE:
+            case Tag.RETURN:
                 stmt();
                 while ((char) token.tag == ';') {
                     eat(';');
@@ -128,31 +133,36 @@ public class Parser {
                 }
                 break;
             default:
-                error("Syntax error: Expect 'ID', 'IF', 'REPEAT', 'READ' or 'WRITE', but found " + Tag.getTagName(token.tag));
+                error("Syntax error: Expect 'ID', 'IF', 'REPEAT', 'READ', 'WRITE', or 'RETURN', but found " + Tag.getTagName(token.tag));
         }
     }
+    
 
-    void stmt() throws IOException {
-        switch (token.tag) {
-            case Tag.ID:
-                assign_stmt();
-                break;
-            case Tag.IF:
-                if_stmt();
-                break;
-            case Tag.REPEAT:
-                repeat_stmt();
-                break;
-            case Tag.READ:
-                read_stmt();
-                break;
-            case Tag.WRITE:
-                write_stmt();
-                break;
-            default:
-                error("Syntax error: Expect 'ID', 'IF', 'REPEAT', 'READ' or 'WRITE', but found " + Tag.getTagName(token.tag));
+        void stmt() throws IOException {
+            switch (token.tag) {
+                case Tag.ID:
+                    assign_stmt();
+                    break;
+                case Tag.IF:
+                    if_stmt();
+                    break;
+                case Tag.REPEAT:
+                    repeat_stmt();
+                    break;
+                case Tag.READ:
+                    read_stmt();
+                    break;
+                case Tag.WRITE:
+                    write_stmt();
+                    break;
+                case Tag.RETURN: // Adicione o RETURN aqui
+                    return_stmt();
+                    break;
+                default:
+                    error("Syntax error: Expect 'ID', 'IF', 'REPEAT', 'READ', 'WRITE', or 'RETURN', but found " + Tag.getTagName(token.tag));
+            }
         }
-    }
+        
 
     void assign_stmt() throws IOException {
         if (token.tag == Tag.ID) {
@@ -230,6 +240,12 @@ public class Parser {
             error("Syntax error: Expect 'WRITE', but found " + Tag.getTagName(token.tag));
         }
     }
+
+    void return_stmt() throws IOException {
+        if (token.tag != Tag.RETURN) {
+            error("Syntax error: Expect 'RETURN', but found " + Tag.getTagName(token.tag));
+        }
+    }    
 
     void writable() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||

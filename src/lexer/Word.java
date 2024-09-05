@@ -10,7 +10,7 @@ public class Word extends Token {
     public static final Word or = new Word ("||", Tag.OR);
 
     public Word (String s, int tag){
-        super (tag);
+        super (tag,s);
         lexeme = s;
     }
     public String toString(){
