@@ -6,7 +6,7 @@ init
 b := a + b;
 read(a);
 read(b);
-if(a) then
+if(a > b) then
 b:=10
 else
 b:=0
