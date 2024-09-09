@@ -60,6 +60,8 @@ public class Parser {
         addReservedWord();
         if(token.tag == Tag.APP) {
             eat(Tag.APP);
+            String varName = ((Word) token).getLexeme();
+            symbolTable.addSymbol(new Symbol(varName, "RESERVED"), Lexer.line);
             identifier();
             body();
             symbolTable.print();
@@ -185,9 +187,14 @@ public class Parser {
 
     void assign_stmt() throws IOException {
         if (token.tag == Tag.ID) {
+            String varName = ((Word) token).getLexeme();
             identifier();
+            Symbol symbol = symbolTable.getSymbol(varName, Lexer.line);
             eat(Tag.DEFINED_AS);
-            simple_expr();
+            String simpleExprType = simple_expr();
+            if (simpleExprType != null && !simpleExprType.equals(symbol.getType())) {
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", symbol.getType(), simpleExprType));
+            }
         }
         else {
             error("Syntax error: Expect 'ID', but found " + Tag.getTagName(token.tag));
@@ -197,10 +204,13 @@ public class Parser {
     void if_stmt() throws IOException {
         if (token.tag == Tag.IF) {
             eat(Tag.IF);
-            condition();
+            String conditionType = condition();
             eat(Tag.THEN);
             stmt_list();
             if_stmt_();
+            if (conditionType != null && !conditionType.equals("BOOLEAN")) {
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", "BOOLEAN", conditionType));
+            }
         } else {
             error("Syntax error: Expect 'IF', but found " + Tag.getTagName(token.tag));
         }
@@ -222,19 +232,22 @@ public class Parser {
         if (token.tag == Tag.REPEAT) {
             eat(Tag.REPEAT);
             stmt_list();
-            stmt_suffix();
+            String stmtSuffixType = stmt_suffix();
+            if(stmtSuffixType != null && !stmtSuffixType.equals("BOOLEAN")) {
+                error(String.format("Semantic error: Type mismatch! Expected BOOLEAN but found %s", stmtSuffixType));
+            }
         } else {
             error("Syntax error: Expect 'REPEAT', but found " + Tag.getTagName(token.tag));
         }
-
     }
 
-    void stmt_suffix() throws IOException {
+    String stmt_suffix() throws IOException {
         if(token.tag == Tag.UNTIL) {
             eat(Tag.UNTIL);
-            condition();
+            return condition();
         } else {
             error("Syntax error: Expect 'UNTIL', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
@@ -271,113 +284,156 @@ public class Parser {
         }
     }
 
-    void condition() throws IOException {
+    String condition() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-')  {
-            expression();
+            String expressionType = expression();
+            if (expressionType != null && !expressionType.equals("BOOLEAN")) {
+                error(String.format("Semantic error: Type mismatch! Expected BOOLEAN but found %s", expressionType));
+            }
+            return "BOOLEAN";
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', or '&&', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void expression() throws IOException {
+    String expression() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
-            simple_expr();
-            expression_();
+            String simpleExprType = simple_expr();
+            String expressionType = expression_(simpleExprType);
+            if (expressionType != null && !expressionType.equals(simpleExprType)) {
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", simpleExprType, expressionType));
+                return null;
+            }
+            return "BOOLEAN";
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', or '&&', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void expression_() throws IOException {
+    String expression_(String expressionType) throws IOException {
         if (token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == ')' || token.tag == Tag.THEN) {
-
+            return null;
         } else if ((char) token.tag == '=' || (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||
                 (char) token.tag == '<' || token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL) {
             relop();
-            simple_expr();
+            String simpleExprType = simple_expr();
+            if (expressionType != null && !expressionType.equals(simpleExprType)) {
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", expressionType, simpleExprType));
+                return null;
+            }
+            return simpleExprType;
         } else {
             error("Syntax error: Expect '=', '>', '<', '>=', '<=', or '!=', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void simple_expr() throws IOException {
+    String simple_expr() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
-            term();
-            simple_expr_();
+            String termType = term();
+            String simpleExprType = simple_expr_();
+            if (simpleExprType != null && !simpleExprType.equals(termType)) {
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", termType, simpleExprType));
+                return null;
+            }
+            return termType;
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!' or '-' , but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void simple_expr_() throws IOException {
+    String simple_expr_() throws IOException {
         if ((token.tag == Tag.RETURN || (char) token.tag == ';') || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL || (char) token.tag == '<' ||
                 token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
                 (char) token.tag == ')' || token.tag == Tag.UNTIL || token.tag == Tag.ELSE || token.tag == Tag.END) {
-
+                return null;
         } else if ((char) token.tag == '+' || (char) token.tag == '-' || token.tag == Tag.OR) {
             addop();
-            term();
-            simple_expr_();
+            String termType = term();
+            String simpleExpr_Type = simple_expr_();
+            if(simpleExpr_Type != null && !simpleExpr_Type.equals(termType)) {
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", termType, simpleExpr_Type));
+                return null;
+            }
+            return termType;
         } else {
             error("Syntax error: Expect '+', '-', or '||', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void term() throws IOException {
+    String term() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
-            factor_a();
-            term_();
+            String factorAType = factor_a();
+            String term_Type = term_();
+            if(term_Type != null && !term_Type.equals(factorAType)) {
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", factorAType, term_Type));
+            }
+            return factorAType;
         } else {
-            error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!' or '-', but found " + Tag.getTagName(token.tag));
+            error(String.format("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!' or '-', but found " + Tag.getTagName(token.tag)));
+            return null;
         }
     }
 
-    void term_() throws IOException {
+    String term_() throws IOException {
         if ((char) token.tag == '+' || (char) token.tag == '-' || token.tag == Tag.OR ||
                 token.tag == Tag.RETURN || (char) token.tag == ';' || (char) token.tag == '=' ||
                 (char) token.tag == '>' || token.tag == Tag.BIG_EQUAL ||  (char) token.tag == '<' ||
                 token.tag == Tag.LEAST_EQUAL || token.tag == Tag.NOT_EQUAL || token.tag == Tag.THEN ||
                 (char) token.tag == ')' || token.tag == Tag.UNTIL || token.tag == Tag.ELSE || token.tag == Tag.END) {
-
+                return null;
         } else if ((char) token.tag == '*' || (char) token.tag == '/' || token.tag == Tag.AND) {
             mulop();
-            factor_a();
-            term_();
+            String factorAType = factor_a();
+            String term_Type = term_();
+            if(term_Type != null && !term_Type.equals(factorAType)) {
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", factorAType, term_Type));
+                return null;
+            }
+            return factorAType;
         } else {
             error("Syntax error: Expect '*', '/', or '&&', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void factor_a() throws IOException {
+    String factor_a() throws IOException {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL || (char) token.tag == '(') {
-            factor();
+            return factor();
         } else if ((char) token.tag == '!') {
             eat('!');
-            factor();
+            return factor();
         } else if ((char) token.tag == '-') {
             eat('-');
-            factor();
+            return factor();
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', or '-', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void factor() throws IOException {
+    String factor() throws IOException {
         if (token.tag == Tag.ID) {
-            identifier();
+            return identifier();
         } else if (token.tag == Tag.NUM || token.tag == Tag.REAL) {
-            constant();
+            return constant();
         } else if ((char) token.tag == '(') {
             eat('(');
-            expression();
+            String expressionType = expression();
             eat(')');
+            return expressionType;
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', or '(', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
@@ -423,48 +479,56 @@ public class Parser {
         }
     }
 
-    void constant() throws IOException {
+    String constant() throws IOException {
         switch (token.tag) {
             case Tag.NUM:
-                integer_const();
-                break;
+                return integer_const();
             case Tag.REAL:
-                float_const();
-                break;
+                return float_const();
             default:
                 error("Syntax error: Expect 'NUM' or 'REAL', but found " + Tag.getTagName(token.tag));
+                return null;
         }
     }
 
-    void integer_const() throws IOException {
-        if (token.tag == Tag.NUM) {
+    String integer_const() throws IOException {
+            if (token.tag == Tag.NUM) {
             eat(Tag.NUM);
+            return Tag.getTagName(Tag.INTEGER).toString();
         } else {
             error("Syntax error: Expect 'NUM', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void float_const() throws IOException {
+    String float_const() throws IOException {
         if (token.tag == Tag.REAL) {
             eat(Tag.REAL);
+            return Tag.getTagName(Tag.REAL).toString();
         } else {
             error("Syntax error: Expect 'REAL', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void literal() throws IOException {
+    String literal() throws IOException {
         if (token.tag == Tag.LITERAL) {
             eat(Tag.LITERAL);
+            return Tag.getTagName(Tag.LITERAL).toString();
         } else {
             error("Syntax error: Expect 'LITERAL', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 
-    void identifier() throws IOException {
+    String identifier() throws IOException {
         if (token.tag == Tag.ID) {
+            String identifierType = symbolTable.getSymbol(((Word) token).getLexeme(), Lexer.line).getType();
             eat(Tag.ID);
+            return identifierType;
         } else {
             error("Syntax error: Expect 'ID', but found " + Tag.getTagName(token.tag));
+            return null;
         }
     }
 }
