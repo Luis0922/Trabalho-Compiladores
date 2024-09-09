@@ -1,6 +1,7 @@
 package lexer;
 
 import Exceptions.IncompleteValueException;
+
 import java.io.*;
 import java.util.*;
 public class Lexer {
@@ -96,13 +97,13 @@ public class Lexer {
             // Operators
             case '!':
                 if (readNextCharacter('=')) return Word.not_equal;
-                else return new Token('!',"excl");
+                else return new Token('!');
             case '>':
                 if (readNextCharacter('=')) return Word.big_equal;
-                else return new Token('>',"gt");
+                else return new Token('>');
             case '<':
                 if (readNextCharacter('=')) return Word.least_equal;
-                else return new Token('<',"lw");
+                else return new Token('<');
             case '|':
                 if (readNextCharacter('|')) return Word.or;
                 else throw new IncompleteValueException(line, "Está faltando um | para completar o operador lógico ||.");
@@ -159,7 +160,7 @@ public class Lexer {
         }
 
         // Characters not specified
-        Token token = new Token(character,"c");
+        Token token = new Token(character);
         character = ' ';
         return token;
     }
