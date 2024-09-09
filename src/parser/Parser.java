@@ -304,7 +304,7 @@ public class Parser {
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
             String simpleExprType = simple_expr();
             String expressionType = expression_(simpleExprType);
-            if (simpleExprType != null && !simpleExprType.equals(expressionType)) {
+            if (expressionType != null && !expressionType.equals(simpleExprType)) {
                 error(String.format("Semantic error: Type mismatch! Expected %s but found %s", simpleExprType, expressionType));
                 return null;
             }
