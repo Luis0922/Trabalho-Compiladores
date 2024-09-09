@@ -15,8 +15,6 @@ public class Parser {
 
     private final SymbolTable symbolTable = new SymbolTable();
 
-    int used = 0;
-
     public void addReservedWord() throws SemanticException {
         symbolTable.addSymbol(new Symbol("if", "RESERVED"), Lexer.line);
         symbolTable.addSymbol(new Symbol("app", "RESERVED"), Lexer.line);
@@ -489,15 +487,14 @@ public class Parser {
     }
 
     String constant() throws IOException {
-        switch (token.tag) {
-            case Tag.NUM:
-                return integer_const();
-            case Tag.REAL:
-                return float_const();
-            default:
+        return switch (token.tag) {
+            case Tag.NUM -> integer_const();
+            case Tag.REAL -> float_const();
+            default -> {
                 error("Syntax error: Expect 'NUM' or 'REAL', but found " + Tag.getTagName(token.tag));
-                return null;
-        }
+                yield null;
+            }
+        };
     }
 
     String integer_const() throws IOException {
