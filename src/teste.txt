@@ -11,5 +11,4 @@ b:=0
 end;
 write(a);
 write(b)
-return;
-teste
+return

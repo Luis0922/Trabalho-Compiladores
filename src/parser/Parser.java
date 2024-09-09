@@ -1,6 +1,8 @@
 package parser;
 
 import lexer.*;
+import semantic.Symbol;
+import semantic.SymbolTable;
 
 import java.io.IOException;
 
@@ -9,6 +11,8 @@ public class Parser {
     private Lexer lex;
 
     private Token token;
+
+    private final SymbolTable symbolTable = new SymbolTable();
 
     int used = 0;
 
@@ -39,6 +43,7 @@ public class Parser {
             eat(Tag.APP);
             identifier();
             body();
+            symbolTable.print();
         } else {
             error("Syntax error: Expect 'APP', but found " + Tag.getTagName(token.tag));
         }
@@ -80,19 +85,23 @@ public class Parser {
         switch(token.tag) {
             case Tag.INTEGER:
             case Tag.REAL:
-                type();
-                ident_list();
+                String varTyoe = type();
+                ident_list(varTyoe);
                 break;
             default:
                 error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + Tag.getTagName(token.tag));
         }
     }
 
-    void ident_list() throws IOException {
+    void ident_list(String varType) throws IOException {
         if (token.tag == Tag.ID) {
+            String varName = ((Word) token).getLexeme();
+            symbolTable.addSymbol(new Symbol(varName, varType), lex.line);
             identifier();
             while ((char) token.tag == ',') {
                 eat(',');
+                varName = ((Word) token).getLexeme();
+                symbolTable.addSymbol(new Symbol(varName, varType), lex.line);
                 identifier();
             }
         }
@@ -101,17 +110,18 @@ public class Parser {
         }
     }
 
-    void type() throws IOException {
+    String type() throws IOException {
         switch (token.tag){
             case Tag.INTEGER:
                 eat(Tag.INTEGER);
-                break;
+                return Tag.getTagName(Tag.INTEGER).toString();
             case Tag.REAL:
                 eat(Tag.REAL);
-                break;
+                return Tag.getTagName(Tag.REAL).toString();
             default:
                 error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + Tag.getTagName(token.tag));
         }
+        return null;
     }
 
     void stmt_list() throws IOException {
