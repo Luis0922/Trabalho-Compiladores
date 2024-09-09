@@ -193,7 +193,8 @@ public class Parser {
             eat(Tag.DEFINED_AS);
             String simpleExprType = simple_expr();
             if (simpleExprType != null && !simpleExprType.equals(symbol.getType())) {
-                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", symbol.getType(), simpleExprType));
+                if(!(symbol.getType().equals("REAL") && simpleExprType.equals("INTEGER")))
+                    error(String.format("Semantic error: Type mismatch! Expected %s but found %s", symbol.getType(), simpleExprType));
             }
         }
         else {
@@ -303,7 +304,7 @@ public class Parser {
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
             String simpleExprType = simple_expr();
             String expressionType = expression_(simpleExprType);
-            if (expressionType != null && !expressionType.equals(simpleExprType)) {
+            if (simpleExprType != null && !simpleExprType.equals(expressionType)) {
                 error(String.format("Semantic error: Type mismatch! Expected %s but found %s", simpleExprType, expressionType));
                 return null;
             }
@@ -336,9 +337,13 @@ public class Parser {
         if (token.tag == Tag.ID || token.tag == Tag.NUM || token.tag == Tag.REAL ||
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
             String termType = term();
-            String simpleExprType = simple_expr_();
-            if (simpleExprType != null && !simpleExprType.equals(termType)) {
-                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", termType, simpleExprType));
+            String simpleExpr_Type = simple_expr_();
+            if (simpleExpr_Type != null && !simpleExpr_Type.equals(termType)) {
+                if((termType.equals("REAL") && simpleExpr_Type.equals("INTEGER")) ||
+                        (termType.equals("INTEGER") && simpleExpr_Type.equals("REAL"))){
+                    return "REAL";
+                }
+                error(String.format("Semantic error: Type mismatch! Expected %s but found %s", termType, simpleExpr_Type));
                 return null;
             }
             return termType;
@@ -359,6 +364,10 @@ public class Parser {
             String termType = term();
             String simpleExpr_Type = simple_expr_();
             if(simpleExpr_Type != null && !simpleExpr_Type.equals(termType)) {
+                if((termType.equals("REAL") && simpleExpr_Type.equals("INTEGER")) ||
+                        (termType.equals("INTEGER") && simpleExpr_Type.equals("REAL"))){
+                    return "REAL";
+                }
                 error(String.format("Semantic error: Type mismatch! Expected %s but found %s", termType, simpleExpr_Type));
                 return null;
             }

@@ -1,11 +1,12 @@
 app Teste8
 var
-integer a, b;
-real a
+integer a, b, c;
+real d
 init
+b := a + b;
 read(a);
 read(b);
-if(a>=0) then
+if(a) then
 b:=10
 else
 b:=0
