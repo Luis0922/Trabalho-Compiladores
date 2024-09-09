@@ -520,13 +520,11 @@ public class Parser {
         }
     }
 
-    String literal() throws IOException {
+    void literal() throws IOException {
         if (token.tag == Tag.LITERAL) {
             eat(Tag.LITERAL);
-            return Tag.getTagName(Tag.LITERAL).toString();
         } else {
             error("Syntax error: Expect 'LITERAL', but found " + Tag.getTagName(token.tag));
-            return null;
         }
     }
 
