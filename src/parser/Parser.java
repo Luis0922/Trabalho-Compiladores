@@ -1,5 +1,6 @@
 package parser;
 
+import Exceptions.SemanticException;
 import lexer.*;
 import semantic.Symbol;
 import semantic.SymbolTable;
@@ -8,13 +9,30 @@ import java.io.IOException;
 
 public class Parser {
 
-    private Lexer lex;
+    private final Lexer lex;
 
     private Token token;
 
     private final SymbolTable symbolTable = new SymbolTable();
 
     int used = 0;
+
+    public void addReservedWord() throws SemanticException {
+        symbolTable.addSymbol(new Symbol("if", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("app", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("var", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("init", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("return", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("integer", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("real", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("else", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("then", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("end", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("repeat", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("until", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("read", "RESERVED"), Lexer.line);
+        symbolTable.addSymbol(new Symbol("write", "RESERVED"), Lexer.line);
+    }
 
     public Parser(Lexer l) throws IOException {
         lex = l;
@@ -26,7 +44,7 @@ public class Parser {
     }
 
     void error(String s) {
-        throw new Error("near line " + lex.line + ": " + s);
+        throw new Error("near line " + Lexer.line + ": " + s);
     }
 
     void eat(int t) throws IOException{
@@ -39,6 +57,7 @@ public class Parser {
 
     // Regras da gramática
     public void program() throws IOException {
+        addReservedWord();
         if(token.tag == Tag.APP) {
             eat(Tag.APP);
             identifier();
@@ -85,8 +104,8 @@ public class Parser {
         switch(token.tag) {
             case Tag.INTEGER:
             case Tag.REAL:
-                String varTyoe = type();
-                ident_list(varTyoe);
+                String varType = type();
+                ident_list(varType);
                 break;
             default:
                 error("Syntax error: Expect 'INTEGER' or 'REAL', but found " + Tag.getTagName(token.tag));
@@ -96,12 +115,12 @@ public class Parser {
     void ident_list(String varType) throws IOException {
         if (token.tag == Tag.ID) {
             String varName = ((Word) token).getLexeme();
-            symbolTable.addSymbol(new Symbol(varName, varType), lex.line);
+            symbolTable.addSymbol(new Symbol(varName, varType), Lexer.line);
             identifier();
             while ((char) token.tag == ',') {
                 eat(',');
                 varName = ((Word) token).getLexeme();
-                symbolTable.addSymbol(new Symbol(varName, varType), lex.line);
+                symbolTable.addSymbol(new Symbol(varName, varType), Lexer.line);
                 identifier();
             }
         }

@@ -1,6 +1,7 @@
 app Teste8
 var
-integer a, b
+integer a, b;
+real a
 init
 read(a);
 read(b);
