@@ -6,6 +6,7 @@ import semantic.Symbol;
 import semantic.SymbolTable;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Parser {
 
@@ -188,6 +189,9 @@ public class Parser {
             String varName = ((Word) token).getLexeme();
             identifier();
             Symbol symbol = symbolTable.getSymbol(varName, Lexer.line);
+            if (symbol.getType() == null || Objects.equals(symbol.getType(), "RESERVED")) {
+                error(String.format("Semantic error: Variable %s not declared or is reserved word", varName));
+            }
             eat(Tag.DEFINED_AS);
             String simpleExprType = simple_expr();
             if (simpleExprType != null && !simpleExprType.equals(symbol.getType())) {
