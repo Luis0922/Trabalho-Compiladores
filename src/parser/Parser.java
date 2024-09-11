@@ -389,6 +389,10 @@ public class Parser {
             String factorAType = factor_a();
             String term_Type = term_();
             if(term_Type != null && !term_Type.equals(factorAType)) {
+                if((factorAType.equals("REAL") && term_Type.equals("INTEGER")) ||
+                        (factorAType.equals("INTEGER") && term_Type.equals("REAL"))){
+                    return "REAL";
+                }
                 error(String.format("Semantic error: Type mismatch! Expected %s but found %s", factorAType, term_Type));
             }
             return factorAType;
