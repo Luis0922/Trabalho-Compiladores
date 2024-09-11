@@ -306,7 +306,7 @@ public class Parser {
                 error(String.format("Semantic error: Type mismatch! Expected %s but found %s", simpleExprType, expressionType));
                 return null;
             }
-            return "BOOLEAN";
+            return simpleExprType;
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', or '&&', but found " + Tag.getTagName(token.tag));
             return null;
