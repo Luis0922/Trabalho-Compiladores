@@ -294,7 +294,7 @@ public class Parser {
             if (expressionType != null && !expressionType.equals("BOOLEAN")) {
                 error(String.format("Semantic error: Type mismatch! Expected BOOLEAN but found %s", expressionType));
             }
-            return "BOOLEAN";
+            return expressionType;
         } else {
             error("Syntax error: Expect 'ID', 'NUM', 'REAL', '(', '!', '-', '*', '/', or '&&', but found " + Tag.getTagName(token.tag));
             return null;
@@ -306,6 +306,9 @@ public class Parser {
                 (char) token.tag == '(' || (char) token.tag == '!' || (char) token.tag == '-') {
             String simpleExprType = simple_expr();
             String expressionType = expression_(simpleExprType);
+            if(Objects.equals(expressionType, "BOOLEAN")) {
+                return expressionType;
+            }
             if (expressionType != null && !expressionType.equals(simpleExprType)) {
                 error(String.format("Semantic error: Type mismatch! Expected %s but found %s", simpleExprType, expressionType));
                 return null;
@@ -328,7 +331,7 @@ public class Parser {
                 error(String.format("Semantic error: Type mismatch! Expected %s but found %s", expressionType, simpleExprType));
                 return null;
             }
-            return simpleExprType;
+            return "BOOLEAN";
         } else {
             error("Syntax error: Expect '=', '>', '<', '>=', '<=', or '!=', but found " + Tag.getTagName(token.tag));
             return null;
